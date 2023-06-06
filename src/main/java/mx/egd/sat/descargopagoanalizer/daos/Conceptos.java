@@ -1,4 +1,4 @@
-package mx.egd.sat.descargopagoanalizer.beans;
+package mx.egd.sat.descargopagoanalizer.daos;
 
 import java.util.ArrayList;
 import java.util.List;
