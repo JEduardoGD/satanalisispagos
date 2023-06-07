@@ -6,6 +6,7 @@ import java.util.Date;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import mx.egd.sat.descargopagoanalizer.daos.db.Registro;
+import mx.egd.sat.descargopagoanalizer.enumss.EnumEstatusPago;
 
 @Slf4j
 @Data
@@ -16,5 +17,5 @@ public class ObjAnalisisPagadosFecha {
 	private boolean virtual = false;
 	private Date fechaPago;
 	private BigDecimal importePago;
-	private Long estatusPago;
+	private EnumEstatusPago estatusPago;
 }

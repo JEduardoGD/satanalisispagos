@@ -23,6 +23,7 @@ import mx.egd.sat.descargopagoanalizer.daos.xml.ObjReporte;
 import mx.egd.sat.descargopagoanalizer.daos.xml.ObjReporteDetalle;
 import mx.egd.sat.descargopagoanalizer.daos.xml.PagoEfectivo;
 import mx.egd.sat.descargopagoanalizer.daos.xml.PagoVirtual;
+import mx.egd.sat.descargopagoanalizer.enumss.EnumEstatusPago;
 import mx.egd.sat.descargopagoanalizer.service.ReportePorFechaService;
 import mx.egd.sat.descargopagoanalizer.util.CreditosFiscalesStreamUtil;
 
@@ -96,19 +97,19 @@ public class ReportePorFechaServiceImpl extends CreditosFiscalesStreamUtil imple
 			objReporte.setFecha(fechaActual);
 			
 			objReporte.getEfectivo().setCount(listObj.stream().filter(ObjAnalisisPagadosFecha::isEfectivo).count());
-			objReporte.getEfectivo().setRegistrados(listObj.stream().filter(ObjAnalisisPagadosFecha::isEfectivo).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago() == 50001).count());
-			objReporte.getEfectivo().setNoAplicados(listObj.stream().filter(ObjAnalisisPagadosFecha::isEfectivo).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago() == 50002).count());
-			objReporte.getEfectivo().setAplicados(listObj.stream().filter(ObjAnalisisPagadosFecha::isEfectivo).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago() == 50003).count());
+			objReporte.getEfectivo().setRegistrados(listObj.stream().filter(ObjAnalisisPagadosFecha::isEfectivo).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago().equals(EnumEstatusPago.REGISTRADO)).count());
+			objReporte.getEfectivo().setNoAplicados(listObj.stream().filter(ObjAnalisisPagadosFecha::isEfectivo).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago().equals(EnumEstatusPago.NO_APLICADO)).count());
+			objReporte.getEfectivo().setAplicados(listObj.stream().filter(ObjAnalisisPagadosFecha::isEfectivo).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago().equals(EnumEstatusPago.APLICADO)).count());
 			
 			objReporte.getVirtual().setCount(listObj.stream().filter(ObjAnalisisPagadosFecha::isVirtual).count());
-			objReporte.getVirtual().setRegistrados(listObj.stream().filter(ObjAnalisisPagadosFecha::isVirtual).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago() == 50001).count());
-			objReporte.getVirtual().setNoAplicados(listObj.stream().filter(ObjAnalisisPagadosFecha::isVirtual).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago() == 50002).count());
-			objReporte.getVirtual().setAplicados(listObj.stream().filter(ObjAnalisisPagadosFecha::isVirtual).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago() == 50003).count());
+			objReporte.getVirtual().setRegistrados(listObj.stream().filter(ObjAnalisisPagadosFecha::isVirtual).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago().equals(EnumEstatusPago.REGISTRADO)).count());
+			objReporte.getVirtual().setNoAplicados(listObj.stream().filter(ObjAnalisisPagadosFecha::isVirtual).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago().equals(EnumEstatusPago.NO_APLICADO)).count());
+			objReporte.getVirtual().setAplicados(listObj.stream().filter(ObjAnalisisPagadosFecha::isVirtual).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago().equals(EnumEstatusPago.APLICADO)).count());
 			
 			objReporte.getOtro().setCount(listObj.stream().filter(cf -> !cf.isEfectivo() && !cf.isVirtual()).count());
-			objReporte.getOtro().setRegistrados(listObj.stream().filter(cf -> !cf.isEfectivo() && !cf.isVirtual()).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago() == 50001).count());
-			objReporte.getOtro().setNoAplicados(listObj.stream().filter(cf -> !cf.isEfectivo() && !cf.isVirtual()).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago() == 50002).count());
-			objReporte.getOtro().setAplicados(listObj.stream().filter(cf -> !cf.isEfectivo() && !cf.isVirtual()).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago() == 50003).count());
+			objReporte.getOtro().setRegistrados(listObj.stream().filter(cf -> !cf.isEfectivo() && !cf.isVirtual()).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago().equals(EnumEstatusPago.REGISTRADO)).count());
+			objReporte.getOtro().setNoAplicados(listObj.stream().filter(cf -> !cf.isEfectivo() && !cf.isVirtual()).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago().equals(EnumEstatusPago.NO_APLICADO)).count());
+			objReporte.getOtro().setAplicados(listObj.stream().filter(cf -> !cf.isEfectivo() && !cf.isVirtual()).filter(apf -> apf.getEstatusPago() != null && apf.getEstatusPago().equals(EnumEstatusPago.APLICADO)).count());
 			
 			listObjReporte.add(objReporte);
 			
@@ -139,7 +140,7 @@ public class ReportePorFechaServiceImpl extends CreditosFiscalesStreamUtil imple
 						.filter(rl -> rl.getNumlinea().equals(cf.getDatosGenerales().getLineaCaptura())).findFirst()
 						.orElse(null);
 				apf.setRegistro(registro);
-				apf.setEstatusPago(registro != null ? registro.getIdestatus() : null);
+				apf.setEstatusPago(registro != null ? EnumEstatusPago.valueOfLabel(registro.getIdestatus()) : null);
 			}
 			if (isVirtual(cf)) {
 				apf.setEfectivo(false);
@@ -152,7 +153,7 @@ public class ReportePorFechaServiceImpl extends CreditosFiscalesStreamUtil imple
 						rl -> rl.getNumdocto().equals(String.valueOf(cf.getDatosGenerales().getNumeroDocumento())))
 						.findFirst().orElse(null);
 				apf.setRegistro(registro);
-				apf.setEstatusPago(registro != null ? registro.getIdestatus() : null);
+				apf.setEstatusPago(registro != null ? EnumEstatusPago.valueOfLabel(registro.getIdestatus()) : null);
 			}
 			if (!isEfectivo(cf) && !isVirtual(cf)) {
 				apf.setEfectivo(false);
@@ -165,7 +166,7 @@ public class ReportePorFechaServiceImpl extends CreditosFiscalesStreamUtil imple
 						.filter(rl -> rl.getNumlinea().equals(cf.getDatosGenerales().getLineaCaptura())).findFirst()
 						.orElse(null);
 				apf.setRegistro(registro);
-				apf.setEstatusPago(registro != null ? registro.getIdestatus() : null);
+				apf.setEstatusPago(registro != null ? EnumEstatusPago.valueOfLabel(registro.getIdestatus()) : null);
 			}
 			return apf;
 		}).collect(Collectors.toList());
