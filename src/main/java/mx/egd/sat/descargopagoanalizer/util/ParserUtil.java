@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
-import mx.egd.sat.descargopagoanalizer.daos.CreditosFiscales;
+import mx.egd.sat.descargopagoanalizer.daos.xml.CreditosFiscales;
 import mx.egd.sat.descargopagoanalizer.exceptions.ParseUtilException;
 
 public abstract class ParserUtil {

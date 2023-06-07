@@ -10,7 +10,11 @@ import mx.egd.sat.descargopagoanalizer.daos.xml.CreditosFiscales;
 import mx.egd.sat.descargopagoanalizer.exceptions.ParseUtilException;
 
 @Slf4j
-public class FileReaderThread extends Thread {
+public class FileReaderNoThread {
+	
+	@Getter
+	@Setter
+	private String name;
 
 	@Setter
 	@Getter
@@ -20,7 +24,7 @@ public class FileReaderThread extends Thread {
 	@Getter
 	private List<CreditosFiscales> creditosFiscalesList;
 
-	public FileReaderThread(String name) {
+	public FileReaderNoThread(String name) {
 		this.setName(name);
 	}
 
@@ -29,7 +33,6 @@ public class FileReaderThread extends Thread {
 		this.creditosFiscalesList = creditosFiscalesList;
 	}
 
-	@Override
 	public void run() {
 		log.debug("Thread {} start", this.getName());
 		try {
@@ -40,4 +43,5 @@ public class FileReaderThread extends Thread {
 		}
 		log.debug("Thread {} end", this.getName());
 	}
+
 }

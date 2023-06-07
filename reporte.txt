@@ -1,0 +1,4 @@
+fecha|efectivo registrados|efectivo no aplicado|efectivo aplicado|efectivo total|virtrual registrados|virtrual no aplicado|virtrual aplicado|virtrual total|otro registrados|otro no aplicado|otro aplicado|otro total
+18/05/2023|0|0|0|0|0|0|0|0|5|0|0|5
+19/05/2023|0|0|0|0|5|0|0|5|0|0|0|0
+

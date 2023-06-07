@@ -1,14 +1,10 @@
-package mx.egd.sat.descargopagoanalizer.daos;
+package mx.egd.sat.descargopagoanalizer.daos.xml;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-
-import mx.egd.sat.descargopagoanalizer.deserializer.DietDeserializer;
 
 public class Conceptos {
 

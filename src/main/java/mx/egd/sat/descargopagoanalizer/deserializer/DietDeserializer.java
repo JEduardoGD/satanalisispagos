@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import mx.egd.sat.descargopagoanalizer.daos.Concepto;
+import mx.egd.sat.descargopagoanalizer.daos.xml.Concepto;
 
 public class DietDeserializer extends JsonDeserializer<List<Concepto>> {
 

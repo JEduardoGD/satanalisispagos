@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import mx.egd.sat.descargopagoanalizer.daos.Concepto;
-import mx.egd.sat.descargopagoanalizer.daos.CreditosFiscales;
-import mx.egd.sat.descargopagoanalizer.daos.DatosGenerales;
+import mx.egd.sat.descargopagoanalizer.daos.xml.Concepto;
+import mx.egd.sat.descargopagoanalizer.daos.xml.CreditosFiscales;
+import mx.egd.sat.descargopagoanalizer.daos.xml.DatosGenerales;
 
 public abstract class CreditosFiscalesStreamUtil {	
 	protected List<Integer> getDistintosPagos(List<CreditosFiscales> beansList) {

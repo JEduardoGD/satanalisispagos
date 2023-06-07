@@ -9,11 +9,11 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 
-import mx.egd.sat.descargopagoanalizer.daos.CreditosFiscales;
-import mx.egd.sat.descargopagoanalizer.daos.DatosGenerales;
-import mx.egd.sat.descargopagoanalizer.daos.PagoEfectivo;
-import mx.egd.sat.descargopagoanalizer.daos.PagoVirtual;
-import mx.egd.sat.descargopagoanalizer.daos.ResultadosAnalisis;
+import mx.egd.sat.descargopagoanalizer.daos.xml.CreditosFiscales;
+import mx.egd.sat.descargopagoanalizer.daos.xml.DatosGenerales;
+import mx.egd.sat.descargopagoanalizer.daos.xml.PagoEfectivo;
+import mx.egd.sat.descargopagoanalizer.daos.xml.PagoVirtual;
+import mx.egd.sat.descargopagoanalizer.daos.xml.ResultadosAnalisis;
 import mx.egd.sat.descargopagoanalizer.service.CifrasService;
 import mx.egd.sat.descargopagoanalizer.util.CreditosFiscalesStreamUtil;
 

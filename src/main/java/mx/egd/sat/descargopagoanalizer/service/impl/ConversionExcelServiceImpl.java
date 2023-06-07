@@ -8,7 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import mx.egd.sat.descargopagoanalizer.daos.CreditosFiscales;
+import mx.egd.sat.descargopagoanalizer.daos.xml.CreditosFiscales;
 import mx.egd.sat.descargopagoanalizer.service.ConversionExcelService;
 import mx.egd.sat.descargopagoanalizer.util.HashUtil;
 

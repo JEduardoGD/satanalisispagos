@@ -1,4 +1,4 @@
-package mx.egd.sat.descargopagoanalizer.daos;
+package mx.egd.sat.descargopagoanalizer.daos.xml;
 
 import java.util.Date;
 

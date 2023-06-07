@@ -1,4 +1,4 @@
-package mx.egd.sat.descargopagoanalizer.daos;
+package mx.egd.sat.descargopagoanalizer.daos.xml;
 
 import java.util.Date;
 
@@ -13,6 +13,6 @@ public abstract class PagoAbstract {
 	private Long importe;
 
 	@JsonProperty("FechaPago")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMdd")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMdd", timezone="America/Mexico_City")
 	private Date fechaPago;
 }
