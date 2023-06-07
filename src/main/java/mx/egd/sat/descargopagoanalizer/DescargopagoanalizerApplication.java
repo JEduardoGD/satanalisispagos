@@ -1,6 +1,5 @@
 package mx.egd.sat.descargopagoanalizer;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ public class DescargopagoanalizerApplication implements CommandLineRunner {
 	@Autowired private ReportePorFechaService reportePorFechaService;
 
 	public static void main(String[] args) {
-		System.out.println(new Date());
 		SpringApplication.run(DescargopagoanalizerApplication.class, args);
 	}
 
