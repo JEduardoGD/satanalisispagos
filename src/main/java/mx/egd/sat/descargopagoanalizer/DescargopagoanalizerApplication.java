@@ -8,11 +8,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import lombok.extern.slf4j.Slf4j;
+import mx.egd.sat.descargopagoanalizer.daos.cifracontrol.Cifracontrol;
 import mx.egd.sat.descargopagoanalizer.daos.db.Registro;
 import mx.egd.sat.descargopagoanalizer.daos.xml.CreditosFiscales;
 import mx.egd.sat.descargopagoanalizer.daos.xml.ObjAnalisisPagadosFecha;
 import mx.egd.sat.descargopagoanalizer.daos.xml.ObjReporte;
 import mx.egd.sat.descargopagoanalizer.daos.xml.ResultadosAnalisis;
+import mx.egd.sat.descargopagoanalizer.service.AnalizaCifrasControlService;
 import mx.egd.sat.descargopagoanalizer.service.CifrasService;
 import mx.egd.sat.descargopagoanalizer.service.LogsAnalizerService;
 import mx.egd.sat.descargopagoanalizer.service.PagosAnalizer;
@@ -26,6 +28,7 @@ public class DescargopagoanalizerApplication implements CommandLineRunner {
 	@Autowired private LogsAnalizerService logsAnalizerService;
 	@Autowired private CifrasService cifrasService;
 	@Autowired private ReportePorFechaService reportePorFechaService;
+	@Autowired private AnalizaCifrasControlService analizaCifrasControlService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(DescargopagoanalizerApplication.class, args);
@@ -59,9 +62,36 @@ public class DescargopagoanalizerApplication implements CommandLineRunner {
 			log.info("Generando reporte de aplicacion");
 			List<ObjReporte> objReporteList = reportePorFechaService.createReport(objAnalisisPagadosFechaList);
 			reportePorFechaService.createSpreadsheet(objReporteList, "reporte.txt");
+
+		} else if (args != null && args.length == 3) {
+			log.info("Analiza archivo cifras de control");
+			log.info("{}", args[0]);
+			List<Cifracontrol> cifracontrolList = analizaCifrasControlService.creaListaCifrasControl(args[0]);
+
+			log.info("Analizando la explotacion de datos PAGOS");
+			log.info("{}", args[1]);
+			List<Registro> registrosLog = logsAnalizerService.parseLog(args[1]);
+			
+			List<Registro> finalLista = null;
+
+			if (cifracontrolList != null) {
+				log.info("Creando lista final");
+				finalLista = analizaCifrasControlService.contrasta(cifracontrolList, registrosLog);
+			} else {
+				log.info("No se pudo generar la lista final");
+			}
+
+			if (finalLista != null) {
+				log.info("Generando informe");
+				analizaCifrasControlService.creaInforme(finalLista, args[0]);
+			} else {
+				log.info("No se pudo generar informe ");
+			}
+			
 		} else {
 			log.error("Error en los argumentos.");
 		}
+		log.info("FIN...");
 	}
 
 }

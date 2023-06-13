@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -125,6 +126,9 @@ public class ReportePorFechaServiceImpl extends CreditosFiscalesStreamUtil imple
 	@Override
 	public List<ObjAnalisisPagadosFecha> createReporteFechas(List<Registro> registrosLog,
 			List<CreditosFiscales> listCreditosFiscales) {
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		
+		int countVirtuales = 1;
 
 		List<ObjAnalisisPagadosFecha> analisisPagadosFechaList = listCreditosFiscales.stream().map(cf -> {
 			ObjAnalisisPagadosFecha apf = new ObjAnalisisPagadosFecha();

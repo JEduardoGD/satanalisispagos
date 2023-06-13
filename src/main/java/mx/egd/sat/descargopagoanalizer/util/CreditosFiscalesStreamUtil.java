@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import mx.egd.sat.descargopagoanalizer.daos.xml.Concepto;
 import mx.egd.sat.descargopagoanalizer.daos.xml.CreditosFiscales;
 import mx.egd.sat.descargopagoanalizer.daos.xml.DatosGenerales;
-import mx.egd.sat.descargopagoanalizer.enumss.EnumEstatusPago;
 
 public abstract class CreditosFiscalesStreamUtil {	
 	protected List<Integer> getDistintosPagos(List<CreditosFiscales> beansList) {

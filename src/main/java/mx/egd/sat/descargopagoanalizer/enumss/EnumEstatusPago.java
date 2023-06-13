@@ -20,4 +20,6 @@ public enum EnumEstatusPago {
 		}
 		return null;
 	}
+	
+	
 }
