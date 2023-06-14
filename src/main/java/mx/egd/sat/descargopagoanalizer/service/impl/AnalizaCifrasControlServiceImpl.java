@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import mx.egd.sat.descargopagoanalizer.daos.cifracontrol.Cifracontrol;
 import mx.egd.sat.descargopagoanalizer.daos.db.Registro;
+import mx.egd.sat.descargopagoanalizer.daos.xml.ObjReporte;
+import mx.egd.sat.descargopagoanalizer.daos.xml.ObjReporteDetalle;
 import mx.egd.sat.descargopagoanalizer.service.AnalizaCifrasControlService;
 import mx.egd.sat.descargopagoanalizer.util.LogLoaderUtil;
 import mx.egd.sat.descargopagoanalizer.util.ParseCifrasControlUitl;
@@ -37,6 +39,7 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 	private static final String ANALISIS_TXT = ".analisis.txt";
 	private static final String ANALISIS_XLSX = ".analisis.xlsx";
 	private static final String HOJA_PAGOS = "PAGO";
+	private static final String HOJA_RESUMEN = "RESUMEN";
 	
 	static {
 		
@@ -44,6 +47,84 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 	
 	@Override
 	public void creaInformeExcel(List<Registro> finalLista, String filename) {
+		
+		ObjReporte or = new ObjReporte();
+		
+		for (Registro r : finalLista) {
+			if (r.getTipoPago() != null) {
+				switch (r.getTipoPago()) {
+				case VIRTUAL:
+					or.getVirtual().setCount(or.getVirtual().getCount() + 1);
+					if (r.getIdpago() == null) {
+						or.getVirtual().setNoEncontrados(or.getVirtual().getNoEncontrados() + 1);
+					}
+					if (r.getIdestatus() != null) {
+						switch (r.getIdestatus().intValue()) {
+						case 50001:
+							or.getVirtual().setRegistrados(or.getVirtual().getRegistrados() + 1);
+							break;
+						case 50002:
+							or.getVirtual().setNoAplicados(or.getVirtual().getNoAplicados() + 1);
+							break;
+						case 50003:
+							or.getVirtual().setAplicados(or.getVirtual().getAplicados() + 1);
+							break;
+						default:
+							or.getVirtual().setOtroEstatus(or.getVirtual().getOtroEstatus() + 1);
+							break;
+						}
+					}
+					break;
+				case EFECTIVO:
+					or.getEfectivo().setCount(or.getEfectivo().getCount() + 1);
+					if (r.getIdpago() == null) {
+						or.getEfectivo().setNoEncontrados(or.getEfectivo().getNoEncontrados() + 1);
+					}
+					if (r.getIdestatus() != null) {
+						switch (r.getIdestatus().intValue()) {
+						case 50001:
+							or.getEfectivo().setRegistrados(or.getEfectivo().getRegistrados() + 1);
+							break;
+						case 50002:
+							or.getEfectivo().setNoAplicados(or.getEfectivo().getNoAplicados() + 1);
+							break;
+						case 50003:
+							or.getEfectivo().setAplicados(or.getEfectivo().getAplicados() + 1);
+							break;
+						default:
+							or.getEfectivo().setOtroEstatus(or.getEfectivo().getOtroEstatus() + 1);
+							break;
+						}
+					}
+					break;
+				case DIFERENTE:
+					or.getDiferente().setCount(or.getDiferente().getCount() + 1);
+					if (r.getIdpago() == null) {
+						or.getDiferente().setNoEncontrados(or.getDiferente().getNoEncontrados() + 1);
+					}
+					if (r.getIdestatus() != null) {
+						switch (r.getIdestatus().intValue()) {
+						case 50001:
+							or.getDiferente().setRegistrados(or.getDiferente().getRegistrados() + 1);
+							break;
+						case 50002:
+							or.getDiferente().setNoAplicados(or.getDiferente().getNoAplicados() + 1);
+							break;
+						case 50003:
+							or.getDiferente().setAplicados(or.getDiferente().getAplicados() + 1);
+							break;
+						default:
+							or.getDiferente().setOtroEstatus(or.getDiferente().getOtroEstatus() + 1);
+							break;
+						}
+					}
+					break;
+				default:
+					log.warn("Tipo de objeto no encontrado: {}", r.toString());
+				}
+			}
+		}
+		
 		OutputStream os = null;
 		XSSFWorkbook workbook = null;
 		try {
@@ -136,6 +217,68 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 			
 			sheetx.setAutoFilter(new CellRangeAddress(0, 0, 0, 5));
 			sheetx.createFreezePane(0, 1);
+			
+
+			XSSFSheet sheetresumen = workbook.createSheet(HOJA_RESUMEN);
+			{
+				for (int i = 0; i < 3; i++) {
+					XSSFCell cellx;
+					int actualRow = i * 7;
+					XSSFRow headerRow = sheetresumen.createRow(actualRow);
+					int actualCol = 0;
+					cellx = headerRow.createCell(actualCol + 0);
+					ObjReporteDetalle objetoDetalle = null;
+					switch (i) {
+					case 0:
+						cellx.setCellValue("Efectivo");
+						objetoDetalle = or.getEfectivo();
+						break;
+					case 1:
+						cellx.setCellValue("Virtual");
+						objetoDetalle = or.getVirtual();
+						break;
+					case 2:
+						cellx.setCellValue("Diferente");
+						objetoDetalle = or.getDiferente();
+						break;
+					}
+					cellx = headerRow.createCell(actualCol + 1);
+					cellx.setCellValue("todos");
+					cellx = headerRow.createCell(actualCol + 2);
+					cellx.setCellValue(objetoDetalle.getCount());
+
+					XSSFRow secondRow = sheetresumen.createRow(actualRow + 1);
+					cellx = secondRow.createCell(actualCol + 1);
+					cellx.setCellValue("registrado");
+					cellx = secondRow.createCell(actualCol + 2);
+					cellx.setCellValue(objetoDetalle.getRegistrados());
+
+					XSSFRow thirdRow = sheetresumen.createRow(actualRow + 2);
+					cellx = thirdRow.createCell(actualCol + 1);
+					cellx.setCellValue("No aplicado");
+					cellx = thirdRow.createCell(actualCol + 2);
+					cellx.setCellValue(objetoDetalle.getNoAplicados());
+
+					XSSFRow fourthRow = sheetresumen.createRow(actualRow + 3);
+					cellx = fourthRow.createCell(actualCol + 1);
+					cellx.setCellValue("Aplicado");
+					cellx = fourthRow.createCell(actualCol + 2);
+					cellx.setCellValue(objetoDetalle.getAplicados());
+
+					XSSFRow fifthRow = sheetresumen.createRow(actualRow + 4);
+					cellx = fifthRow.createCell(actualCol + 1);
+					cellx.setCellValue("Otro estatus");
+					cellx = fifthRow.createCell(actualCol + 2);
+					cellx.setCellValue(objetoDetalle.getOtroEstatus());
+
+					XSSFRow sixthRow = sheetresumen.createRow(actualRow + 5);
+					cellx = sixthRow.createCell(actualCol + 1);
+					cellx.setCellValue("No encontrado");
+					cellx = sixthRow.createCell(actualCol + 2);
+					cellx.setCellValue(objetoDetalle.getNoEncontrados());
+				}
+			}
+			
 
 			os = new FileOutputStream(filename + ANALISIS_XLSX);
 			workbook.write(os);

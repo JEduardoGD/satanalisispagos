@@ -9,5 +9,5 @@ public class ObjReporte {
 	private Date fecha;
 	private ObjReporteDetalle efectivo = new ObjReporteDetalle();
 	private ObjReporteDetalle virtual = new ObjReporteDetalle();
-	private ObjReporteDetalle otro = new ObjReporteDetalle();
+	private ObjReporteDetalle diferente = new ObjReporteDetalle();
 }
