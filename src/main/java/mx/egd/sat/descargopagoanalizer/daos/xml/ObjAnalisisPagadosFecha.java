@@ -4,11 +4,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import mx.egd.sat.descargopagoanalizer.daos.db.Registro;
 import mx.egd.sat.descargopagoanalizer.enumss.EnumEstatusPago;
 
-@Slf4j
 @Data
 public class ObjAnalisisPagadosFecha {
 	private CreditosFiscales creditosFiscales;
