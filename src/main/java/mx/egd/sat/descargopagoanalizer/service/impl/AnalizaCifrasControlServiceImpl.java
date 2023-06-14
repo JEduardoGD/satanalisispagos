@@ -1,7 +1,9 @@
 package mx.egd.sat.descargopagoanalizer.service.impl;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +13,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +35,130 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 	private static final String EMPTY_STRING = "";
 	private static final String NEW_LINE = System.lineSeparator();
 	private static final String ANALISIS_TXT = ".analisis.txt";
+	private static final String ANALISIS_XLSX = ".analisis.xlsx";
+	private static final String HOJA_PAGOS = "PAGO";
+	
+	static {
+		
+	}
+	
+	@Override
+	public void creaInformeExcel(List<Registro> finalLista, String filename) {
+		OutputStream os = null;
+		XSSFWorkbook workbook = null;
+		try {
+			workbook = new XSSFWorkbook();
+			XSSFSheet sheetx = workbook.createSheet(HOJA_PAGOS);
+
+			for (int rowCount = 0; rowCount < finalLista.size(); rowCount++) {
+				Registro registro = finalLista.get(rowCount);
+				XSSFRow rowx;
+
+				String tipoPago = "DESCONOCIDO";
+				if (registro.getTipoPago() != null) {
+					switch (registro.getTipoPago()) {
+					case VIRTUAL:
+						tipoPago = "VIRTUAL";
+						break;
+					case EFECTIVO:
+						tipoPago = "EFECTIVO";
+						break;
+					case DIFERENTE:
+						tipoPago = "DIFERENTE";
+						break;
+					default:
+						tipoPago = "DESCONOCIDO";
+					}
+				}
+
+				XSSFCell cellx;
+
+				if (rowCount == 0) {
+					{
+						rowx = sheetx.createRow(0);
+
+						cellx = rowx.createCell(0);
+						cellx.setCellValue("IDPAGO");
+
+						cellx = rowx.createCell(1);
+						cellx.setCellValue("TIPOPAGO");
+
+						cellx = rowx.createCell(2);
+						cellx.setCellValue("NUMDOCTO");
+
+						cellx = rowx.createCell(3);
+						cellx.setCellValue("NUMLINEA");
+
+						cellx = rowx.createCell(4);
+						cellx.setCellValue("IDESTATUS");
+
+						cellx = rowx.createCell(5);
+						cellx.setCellValue("ENCONTRADOS");
+					}
+				}
+
+				rowx = sheetx.createRow(rowCount + 1);
+
+				if (registro.getIdpago() != null) {
+					cellx = rowx.createCell(0);
+					cellx.setCellType(CellType.NUMERIC);
+					cellx.setCellValue(registro.getIdpago());
+				}
+
+				cellx = rowx.createCell(1);
+				cellx.setCellType(CellType.STRING);
+				cellx.setCellValue(tipoPago);
+
+				if (registro.getNumdocto() != null) {
+					cellx = rowx.createCell(2);
+					cellx.setCellType(CellType.NUMERIC);
+					cellx.setCellValue(registro.getNumdocto());
+				}
+
+				if (registro.getNumlinea() != null) {
+					cellx = rowx.createCell(3);
+					cellx.setCellType(CellType.STRING);
+					cellx.setCellValue(registro.getNumlinea());
+				}
+
+				if (registro.getIdestatus() != null) {
+					cellx = rowx.createCell(4);
+					cellx.setCellType(CellType.NUMERIC);
+					cellx.setCellValue(registro.getIdestatus());
+				}
+
+				if (registro.getEncontrados() != 1) {
+					cellx = rowx.createCell(5);
+					cellx.setCellType(CellType.NUMERIC);
+					cellx.setCellValue(registro.getEncontrados());
+				}
+			}
+			
+			sheetx.setAutoFilter(new CellRangeAddress(0, 0, 0, 5));
+			sheetx.createFreezePane(0, 1);
+
+			os = new FileOutputStream(filename + ANALISIS_XLSX);
+			workbook.write(os);
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		} finally {
+			if (workbook != null) {
+				try {
+					workbook.close();
+				} catch (IOException e) {
+					log.warn(e.getMessage());
+				}
+			}
+
+			if (os != null) {
+				try {
+					os.close();
+				} catch (IOException e) {
+					log.warn(e.getMessage());
+				}
+			}
+		}
+	}
 	
 	@Override
 	public void creaInforme(List<Registro> finalLista, String filename) {

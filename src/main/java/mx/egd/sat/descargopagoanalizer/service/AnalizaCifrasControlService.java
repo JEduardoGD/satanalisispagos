@@ -13,4 +13,6 @@ public interface AnalizaCifrasControlService {
 
 	void creaInforme(List<Registro> finalLista, String filename);
 
+	void creaInformeExcel(List<Registro> finalLista, String filename);
+
 }

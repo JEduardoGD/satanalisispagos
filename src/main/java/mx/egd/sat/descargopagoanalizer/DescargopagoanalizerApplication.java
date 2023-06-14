@@ -83,7 +83,7 @@ public class DescargopagoanalizerApplication implements CommandLineRunner {
 
 			if (finalLista != null) {
 				log.info("Generando informe");
-				analizaCifrasControlService.creaInforme(finalLista, args[0]);
+				analizaCifrasControlService.creaInformeExcel(finalLista, args[0]);
 			} else {
 				log.info("No se pudo generar informe ");
 			}
