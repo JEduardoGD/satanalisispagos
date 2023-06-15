@@ -101,7 +101,7 @@ public class DescargopagoanalizerApplication implements CommandLineRunner {
 				generaInformeService.creaInformeExcel(finalLista, args[0]);
 			} else if (finalLista != null && isFolder != null && isFolder.booleanValue()) {
 				log.info("Generando informe folder");
-				String filename = args[0] + File.separator + StaticValuesUtil.ANALISIS_TXT + StaticValuesUtil.FOLDER;
+				String filename = args[0] + File.separator + StaticValuesUtil.FOLDER + StaticValuesUtil.ANALISIS_TXT;
 				generaInformeService.creaInformeExcel(finalLista, filename);
 			} else {
 				log.info("No se pudo generar informe ");
