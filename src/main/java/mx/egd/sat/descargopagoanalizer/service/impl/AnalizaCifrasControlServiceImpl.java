@@ -159,7 +159,14 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 		log.debug("Tamanio de la lista final {}", listStringComplete.size());
 
 		return listStringComplete.stream().filter(s -> s != null && s.contains(","))
-				.map(s -> ParseCifrasControlUitl.parse(s)).collect(Collectors.toList());
+				.map(s -> {
+					try {
+						return ParseCifrasControlUitl.parse(s);
+					} catch (ParseUtilException e) {
+						log.error(e.getMessage());
+					}
+					return null;
+				}).collect(Collectors.toList());
 	}
 }
 
