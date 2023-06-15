@@ -13,19 +13,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
 import mx.egd.sat.descargopagoanalizer.daos.db.Registro;
+import mx.egd.sat.descargopagoanalizer.exceptions.ParseUtilException;
 
-@Slf4j
-public abstract class LogLoaderUtil {
-
-	private static final String EMPTY_STRING = "";
-	private static final String ONE_SPACE = " ";
-	private static final String REGEX_PIPE = "\\|{1}";
-	private static final DateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
-
-	public static Registro parse(String s) {
-		String[] arr = s.concat(ONE_SPACE).split(REGEX_PIPE);
+public interface LogLoaderUtil {
+	
+	public static Registro parse(String s) throws ParseUtilException {
+		String[] arr = s.concat(StaticValuesUtil.ONE_SPACE).split(StaticValuesUtil.REGEX_ONE_PIPE);
 		Registro registro = new Registro();
 		
 		registro.setIdpago(parseLong(arr[0]));
@@ -50,7 +44,7 @@ public abstract class LogLoaderUtil {
 	}
 
 	static Long parseLong(String s) {
-		if (s == null || EMPTY_STRING.equals(s.trim())) {
+		if (s == null || StaticValuesUtil.EMPTY_STRING.equals(s.trim())) {
 			return null;
 		}
 		
@@ -58,33 +52,33 @@ public abstract class LogLoaderUtil {
 	}
 
 	static String parseString(String s) {
-		if (s == null || EMPTY_STRING.equals(s.trim())) {
+		if (s == null || StaticValuesUtil.EMPTY_STRING.equals(s.trim())) {
 			return null;
 		}
 		return s.trim();
 	}
 
-	static Date parseDate(String s) {
-		if (s == null || EMPTY_STRING.equals(s.trim())) {
+	static Date parseDate(String s) throws ParseUtilException {
+		DateFormat logDateFormat = new SimpleDateFormat(StaticValuesUtil.LOG_DATEFORMAT_S);
+		if (s == null || StaticValuesUtil.EMPTY_STRING.equals(s.trim())) {
 			return null;
 		}
 		try {
-			return DF.parse(s.trim());
+			return logDateFormat.parse(s.trim());
 		} catch (ParseException e) {
-			log.debug(e.getMessage());
+			throw new ParseUtilException(e);
 		}
-		return null;
 	}
 
 	static BigDecimal parseBigDecimal(String s) {
-		if (s == null || EMPTY_STRING.equals(s.trim())) {
+		if (s == null || StaticValuesUtil.EMPTY_STRING.equals(s.trim())) {
 			return null;
 		}
 		return new BigDecimal(s.trim());
 	}
 	
 	static Boolean parseBoolean(String s) {
-		if (s == null || EMPTY_STRING.equals(s.trim())) {
+		if (s == null || StaticValuesUtil.EMPTY_STRING.equals(s.trim())) {
 			return null;
 		}
 		return Boolean.parseBoolean(s.trim());
