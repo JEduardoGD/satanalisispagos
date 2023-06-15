@@ -26,4 +26,5 @@ public abstract class StaticValuesUtil {
 
 	public static final String COMMA = "\\,{1}";
 	public static final String CIFRA_CONTROL_DATEFORMAT_S = "yyyyMMdd";
+}
   
