@@ -16,7 +16,7 @@ public abstract class TimmerUtil {
 		if (diffSecconds > 20) {
 			BigDecimal res = BigDecimal.valueOf(count).divide(BigDecimal.valueOf(total), 2, RoundingMode.HALF_DOWN)
 					.multiply(BigDecimal.valueOf(100));
-			res.setScale(2);
+			res = res.setScale(2);
 			log.info("Avance: {} de {} : {}%", count, total, res.toString());
 			return now;
 		} else {
