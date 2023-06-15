@@ -16,6 +16,7 @@ import mx.egd.sat.descargopagoanalizer.daos.xml.ObjReporte;
 import mx.egd.sat.descargopagoanalizer.daos.xml.ResultadosAnalisis;
 import mx.egd.sat.descargopagoanalizer.service.AnalizaCifrasControlService;
 import mx.egd.sat.descargopagoanalizer.service.CifrasService;
+import mx.egd.sat.descargopagoanalizer.service.GeneraInformeService;
 import mx.egd.sat.descargopagoanalizer.service.LogsAnalizerService;
 import mx.egd.sat.descargopagoanalizer.service.PagosAnalizer;
 import mx.egd.sat.descargopagoanalizer.service.ReportePorFechaService;
@@ -29,6 +30,7 @@ public class DescargopagoanalizerApplication implements CommandLineRunner {
 	@Autowired private CifrasService cifrasService;
 	@Autowired private ReportePorFechaService reportePorFechaService;
 	@Autowired private AnalizaCifrasControlService analizaCifrasControlService;
+	@Autowired private GeneraInformeService generaInformeService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(DescargopagoanalizerApplication.class, args);
@@ -83,7 +85,7 @@ public class DescargopagoanalizerApplication implements CommandLineRunner {
 
 			if (finalLista != null) {
 				log.info("Generando informe");
-				analizaCifrasControlService.creaInforme(finalLista, args[0]);
+				generaInformeService.creaInformeExcel(finalLista, args[0]);
 			} else {
 				log.info("No se pudo generar informe ");
 			}

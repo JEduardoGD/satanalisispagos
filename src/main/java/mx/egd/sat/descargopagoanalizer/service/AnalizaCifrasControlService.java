@@ -11,6 +11,4 @@ public interface AnalizaCifrasControlService {
 
 	List<Registro> contrasta(List<Cifracontrol> cifracontrolList, List<Registro> registrosLog);
 
-	void creaInforme(List<Registro> finalLista, String filename);
-
 }
