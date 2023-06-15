@@ -5,5 +5,5 @@ set JAVA_HOME=C:\Users\Eduardo\sft\jdk-11.0.16
 
 set PATH=%JAVA_HOME%\bin;%MAVEN_HOME%\bin;%PATH%
 set M2_HOME=%MAVEN_HOME%
-mvn clean package -Dmaven.test.skip=true
+call mvn clean package -Dmaven.test.skip=true
 pause
