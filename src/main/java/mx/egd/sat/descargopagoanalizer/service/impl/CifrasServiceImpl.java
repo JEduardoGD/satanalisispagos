@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.stereotype.Service;
 
 import mx.egd.sat.descargopagoanalizer.daos.xml.CreditosFiscales;
@@ -20,10 +18,6 @@ import mx.egd.sat.descargopagoanalizer.util.CreditosFiscalesStreamUtil;
 @Service
 public class CifrasServiceImpl extends CreditosFiscalesStreamUtil implements CifrasService {
 
-	@PostConstruct
-	void init() {
-	}
-
 	/**
 	 *
 	 */
@@ -31,17 +25,13 @@ public class CifrasServiceImpl extends CreditosFiscalesStreamUtil implements Cif
 	public ResultadosAnalisis gettingCifras(List<CreditosFiscales> beansList) {
 
 		ResultadosAnalisis resultadosAnalisis = new ResultadosAnalisis();
-
-		// List<Integer> distintosTiposPagos = getDistintosPagos(beansList);
-
-		// DateFormat df = new SimpleDateFormat(StaticValuesUtil.DATEFORMAT_CF);
-
+		
 		List<CreditosFiscales> virtuales = beansList.stream().filter(CreditosFiscalesStreamUtil::isVirtual)
 				.collect(Collectors.toList());
 
 		resultadosAnalisis.getVirtuales().setEncontrados(virtuales.size());
 
-		List<CreditosFiscales> efectivo = beansList.stream().filter(cf -> CreditosFiscalesStreamUtil.isEfectivo(cf))
+		List<CreditosFiscales> efectivo = beansList.stream().filter(CreditosFiscalesStreamUtil::isEfectivo)
 				.collect(Collectors.toList());
 		resultadosAnalisis.getEfectivo().setEncontrados(efectivo.size());
 
@@ -84,7 +74,6 @@ public class CifrasServiceImpl extends CreditosFiscalesStreamUtil implements Cif
 				.orElse(null);
 		resultadosAnalisis.getDobleTransacBaja().setMasReciente(maxTransactionBaja);
 
-		// RECLAMADOS
 		{
 			List<Date> fechasPagoEfectivo = efectivo.stream().map(CreditosFiscales::getDatosGenerales)
 					.map(DatosGenerales::getPagoEfectivo).map(PagoEfectivo::getFechaPago).collect(Collectors.toList());
@@ -102,10 +91,7 @@ public class CifrasServiceImpl extends CreditosFiscalesStreamUtil implements Cif
 			resultadosAnalisis.getReclamados().setMasReciente(fechaMaxPago);
 		}
 
-		// RECLAMADOS
 		resultadosAnalisis.getTodos().setEncontrados(beansList.size());
-
-		// resultadosAnalisis.getTodos().setMasAntiguo();
 
 		return resultadosAnalisis;
 

@@ -60,7 +60,9 @@ public class ReportePorFechaServiceImpl extends CreditosFiscalesStreamUtil imple
 			if(!file.canWrite()) {
 				log.error("El archivo existe y no se puede borrar");
 			}else {
-				file.delete();
+				if(!file.delete()) {
+					log.error("No pudo borrarse el archivo {}", file.getName());
+				}
 			}
 		}
 		

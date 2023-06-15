@@ -89,7 +89,7 @@ public class DescargopagoanalizerApplication implements CommandLineRunner {
 			
 			List<Registro> finalLista = null;
 
-			if (cifracontrolList != null) {
+			if (cifracontrolList != null && cifracontrolList.size() > 0) {
 				log.info("Creando lista final");
 				finalLista = analizaCifrasControlService.contrasta(cifracontrolList, registrosLog);
 			} else {
