@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -20,15 +21,43 @@ import mx.egd.sat.descargopagoanalizer.service.AnalizaCifrasControlService;
 import mx.egd.sat.descargopagoanalizer.util.LogLoaderUtil;
 import mx.egd.sat.descargopagoanalizer.util.ParseCifrasControlUitl;
 import mx.egd.sat.descargopagoanalizer.util.StaticValuesUtil;
+import mx.egd.sat.descargopagoanalizer.util.TimmerUtil;
 
 @Service
 @Slf4j
 public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlService {
+	
+	@Override
+	public Boolean isFolder(String s) {
+		if (s == null || StaticValuesUtil.EMPTY_STRING.equals(s)) {
+			return null;
+		}
+		Path p = Paths.get(s);
+		File f = p.toFile();
+		return Boolean.valueOf(f.isDirectory());
+	}
+	
+	@Override
+	public Boolean isFile(String s) {
+		if (s == null || StaticValuesUtil.EMPTY_STRING.equals(s)) {
+			return null;
+		}
+		Path p = Paths.get(s);
+		File f = p.toFile();
+		return Boolean.valueOf(f.isFile());
+	}
 
 	@Override
 	public List<Registro> contrasta(List<Cifracontrol> cifracontrolList, List<Registro> registrosLog) {
 		List<Registro> finalLista = new ArrayList<>();
+		
+		LocalDateTime nowTime = LocalDateTime.now();
+		long count = 1;
+		long total = cifracontrolList.size();
+		
 		for (Cifracontrol cf : cifracontrolList) {
+			nowTime = TimmerUtil.timmer(StaticValuesUtil.STR_CONTRASTA_LISTA_TOPIC, nowTime, count++, total);
+			
 			LinkedHashSet<Registro> busca = new LinkedHashSet<>();
 			List<Registro> buscaPorNumDocto = new ArrayList<>();
 			List<Registro> buscaPorLinea = new ArrayList<>();
@@ -50,7 +79,7 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 			}
 			if (cf.getLineacaptura() != null && !StaticValuesUtil.EMPTY_STRING.equals(cf.getLineacaptura())) {
 				r.setNumlinea(cf.getLineacaptura());
-				// busqueda por numero de documento
+				// busqueda por numero de linea de captura
 				buscaPorLinea = registrosLog.stream().filter(log -> log.getNumlinea() != null)
 						.filter(log -> log.getNumlinea().equals(cf.getLineacaptura())).collect(Collectors.toList());
 				buscaPorLinea = buscaPorLinea.stream().map(u -> {
@@ -77,7 +106,7 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 	}
 
 	@Override
-	public List<Cifracontrol> creaListaCifrasControl(String pathFile) {
+	public List<Cifracontrol> creaListaCifrasControlFile(String pathFile) {
 
 		Path path = Paths.get(pathFile);
 
@@ -105,4 +134,68 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 		})
 				.collect(Collectors.toList());
 	}
+	
+
+
+	@Override
+	public List<Cifracontrol> creaListaCifrasControlFolder(String pathFile) {
+		File f = Paths.get(pathFile).toFile();
+		File[] fileArray = f.listFiles();
+		List<File> fileList = Arrays.asList(fileArray).stream()
+				.filter(file -> file.getName().toLowerCase().endsWith(StaticValuesUtil.TXT_EXTENSION_LC))
+				.collect(Collectors.toList());
+		List<String> listStringComplete = new ArrayList<>();
+		
+		for(File file:fileList) {
+			try {
+				List<String> listStringTemp = LogLoaderUtil.fileToArrayList(file);
+				log.debug("{} registros obtenidos del archivo {}", listStringTemp.size(), file.getName());
+				listStringComplete.addAll(listStringTemp);
+			} catch (IOException e) {
+				log.error(e.getMessage());
+			}
+		}
+		
+		log.debug("Tamanio de la lista final {}", listStringComplete.size());
+
+		return listStringComplete.stream().filter(s -> s != null && s.contains(","))
+				.map(s -> ParseCifrasControlUitl.parse(s)).collect(Collectors.toList());
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

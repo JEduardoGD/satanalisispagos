@@ -1,5 +1,6 @@
 package mx.egd.sat.descargopagoanalizer;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import mx.egd.sat.descargopagoanalizer.service.GeneraInformeService;
 import mx.egd.sat.descargopagoanalizer.service.LogsAnalizerService;
 import mx.egd.sat.descargopagoanalizer.service.PagosAnalizer;
 import mx.egd.sat.descargopagoanalizer.service.ReportePorFechaService;
+import mx.egd.sat.descargopagoanalizer.util.StaticValuesUtil;
 
 @SpringBootApplication
 @Slf4j
@@ -68,7 +70,18 @@ public class DescargopagoanalizerApplication implements CommandLineRunner {
 		} else if (args != null && args.length == 3) {
 			log.info("Analiza archivo cifras de control");
 			log.info("{}", args[0]);
-			List<Cifracontrol> cifracontrolList = analizaCifrasControlService.creaListaCifrasControl(args[0]);
+			
+			Boolean isFile = analizaCifrasControlService.isFile(args[0]);
+			Boolean isFolder= analizaCifrasControlService.isFolder(args[0]);
+			
+			List<Cifracontrol> cifracontrolList = null;
+			
+			if (isFile != null && isFile.booleanValue()) {
+				cifracontrolList = analizaCifrasControlService.creaListaCifrasControlFile(args[0]);
+			}
+			if (isFolder != null && isFolder.booleanValue()) {
+				cifracontrolList = analizaCifrasControlService.creaListaCifrasControlFolder(args[0]);
+			}
 
 			log.info("Analizando la explotacion de datos PAGOS");
 			log.info("{}", args[1]);
@@ -83,9 +96,13 @@ public class DescargopagoanalizerApplication implements CommandLineRunner {
 				log.info("No se pudo generar la lista final");
 			}
 
-			if (finalLista != null) {
-				log.info("Generando informe");
+			if (finalLista != null && isFile != null && isFile.booleanValue()) {
+				log.info("Generando informe file");
 				generaInformeService.creaInformeExcel(finalLista, args[0]);
+			} else if (finalLista != null && isFolder != null && isFolder.booleanValue()) {
+				log.info("Generando informe folder");
+				String filename = args[0] + File.separator + StaticValuesUtil.ANALISIS_TXT + StaticValuesUtil.FOLDER;
+				generaInformeService.creaInformeExcel(finalLista, filename);
 			} else {
 				log.info("No se pudo generar informe ");
 			}

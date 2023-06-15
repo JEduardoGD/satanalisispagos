@@ -7,8 +7,14 @@ import mx.egd.sat.descargopagoanalizer.daos.db.Registro;
 
 public interface AnalizaCifrasControlService {
 
-	List<Cifracontrol> creaListaCifrasControl(String pathFile);
+	List<Cifracontrol> creaListaCifrasControlFile(String pathFile);
 
 	List<Registro> contrasta(List<Cifracontrol> cifracontrolList, List<Registro> registrosLog);
+
+	Boolean isFolder(String s);
+
+	Boolean isFile(String s);
+
+	List<Cifracontrol> creaListaCifrasControlFolder(String pathFile);
 
 }
