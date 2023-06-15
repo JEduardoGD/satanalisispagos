@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import mx.egd.sat.descargopagoanalizer.daos.cifracontrol.Cifracontrol;
 import mx.egd.sat.descargopagoanalizer.daos.db.Registro;
+import mx.egd.sat.descargopagoanalizer.exceptions.ParseUtilException;
 import mx.egd.sat.descargopagoanalizer.service.AnalizaCifrasControlService;
 import mx.egd.sat.descargopagoanalizer.util.LogLoaderUtil;
 import mx.egd.sat.descargopagoanalizer.util.ParseCifrasControlUitl;
@@ -82,7 +84,7 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 		File file = path.toFile();
 		if (!file.exists()) {
 			log.error("No existe el archivo de cifras de control {}" + pathFile);
-			return null;
+			return Arrays.asList();
 		}
 
 		List<String> array = new ArrayList<>();
@@ -92,7 +94,15 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 			log.error(e.getMessage());
 		}
 
-		return array.stream().filter(s -> s != null && s.contains(",")).map(s -> ParseCifrasControlUitl.parse(s))
+		return array.stream().filter(s -> s != null && s.contains(",")).map(s -> {
+			try {
+				return ParseCifrasControlUitl.parse(s);
+			} catch (ParseUtilException e) {
+				log.error("Error al parsear: {}", s);
+				log.error(e.getMessage());
+			}
+			return null;
+		})
 				.collect(Collectors.toList());
 	}
 }

@@ -294,7 +294,9 @@ public class GeneraInformeServiceImpl implements GeneraInformeService {
 
 		if (f.exists()) {
 			if (f.canWrite()) {
-				f.delete();
+				if (!f.delete()) {
+					log.error("No pudo borrarse el archivo: {}", path.getFileName());
+				}
 			} else {
 				log.error("El archivo existe pero no puede borrarse: {}" + path.toString());
 				return;
