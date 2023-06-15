@@ -52,6 +52,5 @@ public abstract class CreditosFiscalesStreamUtil {
 			}
 		}
 		return false;
-		
 	}
 }

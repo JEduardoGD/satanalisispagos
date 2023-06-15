@@ -6,9 +6,20 @@ public enum EnumEstatusPago {
 	REGISTRADO(50001), APLICADO(50003), NO_APLICADO(50002);
 
 	@Getter
-	private int estatusNum;
+	private long estatusNum;
 
 	EnumEstatusPago(int estatusNum) {
 		this.estatusNum = estatusNum;
 	}
+
+	public static EnumEstatusPago valueOfLabel(long value) {
+		for (EnumEstatusPago e : values()) {
+			if (e.estatusNum == value) {
+				return e;
+			}
+		}
+		return null;
+	}
+	
+	
 }
