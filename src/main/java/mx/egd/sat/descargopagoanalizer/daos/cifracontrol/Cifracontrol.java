@@ -16,5 +16,6 @@ public class Cifracontrol {
 	private String lineacaptura;
 	private Long numerob;
 	private Long tipodocumento;
+	private String filename;
 	private EnumTipoPago tipoPago;
 }
