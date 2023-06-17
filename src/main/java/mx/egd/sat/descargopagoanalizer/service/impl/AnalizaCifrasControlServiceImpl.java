@@ -146,63 +146,30 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 				.filter(file -> file.getName().toLowerCase().endsWith(StaticValuesUtil.TXT_EXTENSION_LC))
 				.collect(Collectors.toList());
 		List<String> listStringComplete = new ArrayList<>();
+		
+		List<Cifracontrol> cifracontrolList = null;
 
 		for (File file : fileList) {
 			try {
 				List<String> listStringTemp = LogLoaderUtil.fileToArrayList(file);
 				log.debug("{} registros obtenidos del archivo {}", listStringTemp.size(), file.getName());
 				listStringComplete.addAll(listStringTemp);
+
+				log.debug("Tamanio de la lista final {}", listStringComplete.size());
+				cifracontrolList = listStringComplete.stream().filter(s -> s != null && s.contains(",")).map(s -> {
+					try {
+						return ParseCifrasControlUitl.parse(s, file.getName());
+					} catch (ParseUtilException e) {
+						log.error(e.getMessage());
+					}
+					return null;
+				}).collect(Collectors.toList());
+				
 			} catch (IOException e) {
 				log.error(e.getMessage());
 			}
 		}
-
-		log.debug("Tamanio de la lista final {}", listStringComplete.size());
-
-		return listStringComplete.stream().filter(s -> s != null && s.contains(",")).map(s -> {
-			try {
-				return ParseCifrasControlUitl.parse(s);
-			} catch (ParseUtilException e) {
-				log.error(e.getMessage());
-			}
-			return null;
-		}).collect(Collectors.toList());
+		
+		return cifracontrolList;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
