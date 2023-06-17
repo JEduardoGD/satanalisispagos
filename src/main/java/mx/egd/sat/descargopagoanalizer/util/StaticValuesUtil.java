@@ -11,13 +11,13 @@ public abstract class StaticValuesUtil {
 	public static final String NEW_LINE = System.lineSeparator();
 	public static final String ANALISIS_TXT = "analisis.txt";
 	public static final String ANALISIS_XLSX = ".analisis.xlsx";
+	public static final String CARPETA = "carpeta";
 	public static final String HOJA_PAGOS = "PAGO";
 	public static final String HOJA_RESUMEN = "RESUMEN";
 	public static final String EMPTY_STRING = "";
 	public static final String XML_EXTENSION_LC = "xml";
 	public static final String TXT_EXTENSION_LC = "txt";
 	public static final String FOLDER = ".folder";
-	public static final String STR_ANALISIS = ".analisis";
 	public static final String STR_CONTRASTA_LISTA_TOPIC = "Contrasta lista";
   
 	public static final String ONE_SPACE = " ";
