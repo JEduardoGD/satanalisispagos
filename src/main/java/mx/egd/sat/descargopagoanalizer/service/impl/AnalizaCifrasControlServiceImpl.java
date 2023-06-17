@@ -145,18 +145,14 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 		List<File> fileList = Arrays.asList(fileArray).stream()
 				.filter(file -> file.getName().toLowerCase().endsWith(StaticValuesUtil.TXT_EXTENSION_LC))
 				.collect(Collectors.toList());
-		List<String> listStringComplete = new ArrayList<>();
-		
-		List<Cifracontrol> cifracontrolList = null;
+		List<Cifracontrol> cifracontrolListFinal = new ArrayList<>();
 
 		for (File file : fileList) {
 			try {
 				List<String> listStringTemp = LogLoaderUtil.fileToArrayList(file);
-				log.debug("{} registros obtenidos del archivo {}", listStringTemp.size(), file.getName());
-				listStringComplete.addAll(listStringTemp);
+				log.info("{} registros obtenidos del archivo {}", listStringTemp.size(), file.getName());
 
-				log.debug("Tamanio de la lista final {}", listStringComplete.size());
-				cifracontrolList = listStringComplete.stream().filter(s -> s != null && s.contains(",")).map(s -> {
+				List<Cifracontrol> cifracontrolList = listStringTemp.stream().filter(s -> s != null && s.contains(",")).map(s -> {
 					try {
 						return ParseCifrasControlUitl.parse(s, file.getName());
 					} catch (ParseUtilException e) {
@@ -164,12 +160,13 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 					}
 					return null;
 				}).collect(Collectors.toList());
-				
+				cifracontrolListFinal.addAll(cifracontrolList);
+
 			} catch (IOException e) {
 				log.error(e.getMessage());
 			}
 		}
-		
-		return cifracontrolList;
+
+		return cifracontrolListFinal;
 	}
 }

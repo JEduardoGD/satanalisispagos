@@ -120,10 +120,13 @@ public class DescargopagoanalizerApplication implements CommandLineRunner {
 						} else {
 							log.info("No se pudo generar la lista final");
 						}
+						
+						File folder = Paths.get(args[0]).toFile();
+						String filename = folder.getAbsolutePath() + File.separator + StaticValuesUtil.CARPETA;
 
 						if (finalLista != null) {
 							log.info("Generando informe file");
-							generaInformeService.creaInformeExcel(finalLista, args[0]);
+							generaInformeService.creaInformeExcel(finalLista, filename);
 						}
 						break;
 					default:
