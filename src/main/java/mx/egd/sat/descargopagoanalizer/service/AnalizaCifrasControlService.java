@@ -16,5 +16,4 @@ public interface AnalizaCifrasControlService {
 	Boolean isFile(String s);
 
 	List<Cifracontrol> creaListaCifrasControlFolder(String pathFile);
-
 }
