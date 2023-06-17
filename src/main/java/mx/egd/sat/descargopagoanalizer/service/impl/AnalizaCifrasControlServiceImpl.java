@@ -137,8 +137,6 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 		})
 				.collect(Collectors.toList());
 	}
-	
-
 
 	@Override
 	public List<Cifracontrol> creaListaCifrasControlFolder(String pathFile) {
@@ -147,14 +145,28 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 		List<File> fileList = Arrays.asList(fileArray).stream()
 				.filter(file -> file.getName().toLowerCase().endsWith(StaticValuesUtil.TXT_EXTENSION_LC))
 				.collect(Collectors.toList());
-		
-		List<Cifracontrol> cifracontrolListFinal = new ArrayList<>();
-		
-		for(File file:fileList) {
-			cifracontrolListFinal.addAll(this.creaListaCifrasControlFile(file.getAbsolutePath()));
+		List<String> listStringComplete = new ArrayList<>();
+
+		for (File file : fileList) {
+			try {
+				List<String> listStringTemp = LogLoaderUtil.fileToArrayList(file);
+				log.debug("{} registros obtenidos del archivo {}", listStringTemp.size(), file.getName());
+				listStringComplete.addAll(listStringTemp);
+			} catch (IOException e) {
+				log.error(e.getMessage());
+			}
 		}
-		
-		return cifracontrolListFinal;
+
+		log.debug("Tamanio de la lista final {}", listStringComplete.size());
+
+		return listStringComplete.stream().filter(s -> s != null && s.contains(",")).map(s -> {
+			try {
+				return ParseCifrasControlUitl.parse(s);
+			} catch (ParseUtilException e) {
+				log.error(e.getMessage());
+			}
+			return null;
+		}).collect(Collectors.toList());
 	}
 }
 
