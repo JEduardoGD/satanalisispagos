@@ -3,7 +3,7 @@ package mx.egd.sat.descargopagoanalizer.enumss;
 import lombok.Getter;
 
 public enum EnumTipoProcesamiento {
-	POR_ARCHIVO("porarchivo"), POR_CARPETA("por_carpeta");
+	POR_ARCHIVO("porarchivo"), POR_CARPETA("porcarpeta");
 
 	@Getter
 	private String tipo;
