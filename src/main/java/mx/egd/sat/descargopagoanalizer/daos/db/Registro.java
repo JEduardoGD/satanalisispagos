@@ -65,6 +65,9 @@ public class Registro {
 	@Getter
 	@Setter
 	private EnumTipoPago tipoPago;
+	@Getter
+	@Setter
+	private String fileName;
 
 	@Override
 	public int hashCode() {
