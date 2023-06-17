@@ -65,6 +65,7 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 			Registro r = new Registro();
 			r.setEncontrados(0);
 			r.setTipoPago(cf.getTipoPago());
+			r.setFileName(cf.getFilename());
 
 			if (cf.getNumerodocumento() != null && !StaticValuesUtil.EMPTY_STRING.equals(cf.getNumerodocumento().toString())) {
 				r.setNumdocto(cf.getNumerodocumento().toString());
@@ -74,6 +75,7 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 						.collect(Collectors.toList());
 				buscaPorNumDocto = buscaPorNumDocto.stream().map(u -> {
 					u.setTipoPago(cf.getTipoPago());
+					u.setFileName(cf.getFilename());
 					return u;
 				}).collect(Collectors.toList());
 			}
@@ -84,6 +86,7 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 						.filter(log -> log.getNumlinea().equals(cf.getLineacaptura())).collect(Collectors.toList());
 				buscaPorLinea = buscaPorLinea.stream().map(u -> {
 					u.setTipoPago(cf.getTipoPago());
+					u.setFileName(cf.getFilename());
 					return u;
 				}).collect(Collectors.toList());
 			}
@@ -125,7 +128,7 @@ public class AnalizaCifrasControlServiceImpl implements AnalizaCifrasControlServ
 
 		return array.stream().filter(s -> s != null && s.contains(",")).map(s -> {
 			try {
-				return ParseCifrasControlUitl.parse(s);
+				return ParseCifrasControlUitl.parse(s, file.getName());
 			} catch (ParseUtilException e) {
 				log.error("Error al parsear: {}", s);
 				log.error(e.getMessage());

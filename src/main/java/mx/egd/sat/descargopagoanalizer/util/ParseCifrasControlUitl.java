@@ -25,7 +25,7 @@ public interface ParseCifrasControlUitl {
 	 * @return 
 	 * @throws ParseUtilException 
 	 */
-	public static Cifracontrol parse(String s) throws ParseUtilException {
+	public static Cifracontrol parse(String s, String fileName) throws ParseUtilException {
 		String[] arr = s.concat(StaticValuesUtil.ONE_SPACE).split(StaticValuesUtil.COMMA);
 		
 		Cifracontrol cc = new Cifracontrol();
@@ -38,6 +38,7 @@ public interface ParseCifrasControlUitl {
 		cc.setLineacaptura(parseString(arr[5]));
 		cc.setNumerob(parseLong(arr[6]));
 		cc.setTipodocumento(parseLong(arr[7]));
+		cc.setFilename(fileName);
 		
 		boolean isVirtual = isVirtual(cc);
 		boolean isEfectivo = isEfectivo(cc);

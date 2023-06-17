@@ -198,6 +198,12 @@ public class GeneraInformeServiceImpl implements GeneraInformeService {
 					cellx.setCellType(CellType.NUMERIC);
 					cellx.setCellValue(registro.getEncontrados());
 				}
+				
+				{
+					cellx = rowx.createCell(6);
+					cellx.setCellType(CellType.STRING);
+					cellx.setCellValue(registro.getFileName());
+				}
 			}
 
 			sheetx.setAutoFilter(new CellRangeAddress(0, 0, 0, 5));
