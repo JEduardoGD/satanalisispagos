@@ -25,7 +25,7 @@ public class CifrasServiceImpl extends CreditosFiscalesStreamUtil implements Cif
 	public ResultadosAnalisis gettingCifras(List<CreditosFiscales> beansList) {
 
 		ResultadosAnalisis resultadosAnalisis = new ResultadosAnalisis();
-		
+
 		List<CreditosFiscales> virtuales = beansList.stream().filter(CreditosFiscalesStreamUtil::isVirtual)
 				.collect(Collectors.toList());
 
@@ -74,22 +74,20 @@ public class CifrasServiceImpl extends CreditosFiscalesStreamUtil implements Cif
 				.orElse(null);
 		resultadosAnalisis.getDobleTransacBaja().setMasReciente(maxTransactionBaja);
 
-		{
-			List<Date> fechasPagoEfectivo = efectivo.stream().map(CreditosFiscales::getDatosGenerales)
-					.map(DatosGenerales::getPagoEfectivo).map(PagoEfectivo::getFechaPago).collect(Collectors.toList());
+		List<Date> fechasPagoEfectivo = efectivo.stream().map(CreditosFiscales::getDatosGenerales)
+				.map(DatosGenerales::getPagoEfectivo).map(PagoEfectivo::getFechaPago).collect(Collectors.toList());
 
-			List<Date> fechasPagoVirtual = virtuales.stream().map(CreditosFiscales::getDatosGenerales)
-					.map(DatosGenerales::getPagoVirtual).map(PagoVirtual::getFechaPago).collect(Collectors.toList());
+		List<Date> fechasPagoVirtual = virtuales.stream().map(CreditosFiscales::getDatosGenerales)
+				.map(DatosGenerales::getPagoVirtual).map(PagoVirtual::getFechaPago).collect(Collectors.toList());
 
-			List<Date> fechasPago = fechasPagoEfectivo;
-			fechasPago.addAll(fechasPagoVirtual);
+		List<Date> fechasPago = fechasPagoEfectivo;
+		fechasPago.addAll(fechasPagoVirtual);
 
-			Date fechaMinPago = fechasPago.stream().min(Comparator.naturalOrder()).orElse(null);
-			Date fechaMaxPago = fechasPago.stream().max(Comparator.naturalOrder()).orElse(null);
-			resultadosAnalisis.getReclamados().setEncontrados(fechasPago.size());
-			resultadosAnalisis.getReclamados().setMasAntiguo(fechaMinPago);
-			resultadosAnalisis.getReclamados().setMasReciente(fechaMaxPago);
-		}
+		Date fechaMinPago = fechasPago.stream().min(Comparator.naturalOrder()).orElse(null);
+		Date fechaMaxPago = fechasPago.stream().max(Comparator.naturalOrder()).orElse(null);
+		resultadosAnalisis.getReclamados().setEncontrados(fechasPago.size());
+		resultadosAnalisis.getReclamados().setMasAntiguo(fechaMinPago);
+		resultadosAnalisis.getReclamados().setMasReciente(fechaMaxPago);
 
 		resultadosAnalisis.getTodos().setEncontrados(beansList.size());
 
