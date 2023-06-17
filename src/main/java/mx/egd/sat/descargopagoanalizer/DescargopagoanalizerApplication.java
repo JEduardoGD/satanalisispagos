@@ -1,7 +1,10 @@
 package mx.egd.sat.descargopagoanalizer;
 
 import java.io.File;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -15,6 +18,7 @@ import mx.egd.sat.descargopagoanalizer.daos.xml.CreditosFiscales;
 import mx.egd.sat.descargopagoanalizer.daos.xml.ObjAnalisisPagadosFecha;
 import mx.egd.sat.descargopagoanalizer.daos.xml.ObjReporte;
 import mx.egd.sat.descargopagoanalizer.daos.xml.ResultadosAnalisis;
+import mx.egd.sat.descargopagoanalizer.enumss.EnumTipoProcesamiento;
 import mx.egd.sat.descargopagoanalizer.service.AnalizaCifrasControlService;
 import mx.egd.sat.descargopagoanalizer.service.CifrasService;
 import mx.egd.sat.descargopagoanalizer.service.GeneraInformeService;
@@ -75,38 +79,59 @@ public class DescargopagoanalizerApplication implements CommandLineRunner {
 			Boolean isFolder= analizaCifrasControlService.isFolder(args[0]);
 			
 			List<Cifracontrol> cifracontrolList = null;
-			
-			if (isFile != null && isFile.booleanValue()) {
-				cifracontrolList = analizaCifrasControlService.creaListaCifrasControlFile(args[0]);
-			}
-			if (isFolder != null && isFolder.booleanValue()) {
-				cifracontrolList = analizaCifrasControlService.creaListaCifrasControlFolder(args[0]);
-			}
 
 			log.info("Analizando la explotacion de datos PAGOS");
 			log.info("{}", args[1]);
 			List<Registro> registrosLog = logsAnalizerService.parseLog(args[1]);
 			
-			List<Registro> finalLista = null;
-
-			if (cifracontrolList != null && cifracontrolList.size() > 0) {
-				log.info("Creando lista final");
-				finalLista = analizaCifrasControlService.contrasta(cifracontrolList, registrosLog);
-			} else {
-				log.info("No se pudo generar la lista final");
+			if (isFile != null && isFile.booleanValue()) {
+				cifracontrolList = analizaCifrasControlService.creaListaCifrasControlFile(args[0]);
 			}
+			if (isFolder != null && isFolder.booleanValue()) {
+				List<Registro> finalLista = null;
+				if (args[2] != null) {
+					EnumTipoProcesamiento tipoParseo = EnumTipoProcesamiento.parse(args[2]);
+					switch (tipoParseo) {
+					case POR_ARCHIVO:
+						File[] filesOnFolderArray = Paths.get(args[0]).toFile().listFiles();
+						List<File> filesOnFolderList = Arrays.asList(filesOnFolderArray).stream()
+								.filter(f -> f.getName().toLowerCase().endsWith(StaticValuesUtil.TXT_EXTENSION_LC))
+								.collect(Collectors.toList());
+						for (File file : filesOnFolderList) {
+							cifracontrolList = analizaCifrasControlService
+									.creaListaCifrasControlFile(file.getAbsolutePath());
+							if (cifracontrolList != null && cifracontrolList.size() > 0) {
+								log.info("Creando lista final");
+								finalLista = analizaCifrasControlService.contrasta(cifracontrolList, registrosLog);
+							}
+							if (finalLista != null) {
+								log.info("Generando informe file");
+								generaInformeService.creaInformeExcel(finalLista, file.getAbsolutePath());
+							}
+							finalLista = null;
+							cifracontrolList = null;
+						}
+						break;
+					case POR_CARPETA:
+						cifracontrolList = analizaCifrasControlService.creaListaCifrasControlFolder(args[0]);
+						if (cifracontrolList != null && cifracontrolList.size() > 0) {
+							log.info("Creando lista final");
+							finalLista = analizaCifrasControlService.contrasta(cifracontrolList, registrosLog);
+						} else {
+							log.info("No se pudo generar la lista final");
+						}
 
-			if (finalLista != null && isFile != null && isFile.booleanValue()) {
-				log.info("Generando informe file");
-				generaInformeService.creaInformeExcel(finalLista, args[0]);
-			} else if (finalLista != null && isFolder != null && isFolder.booleanValue()) {
-				log.info("Generando informe folder");
-				String filename = args[0] + File.separator + StaticValuesUtil.FOLDER + StaticValuesUtil.ANALISIS_TXT;
-				generaInformeService.creaInformeExcel(finalLista, filename);
-			} else {
-				log.info("No se pudo generar informe ");
+						if (finalLista != null) {
+							log.info("Generando informe file");
+							generaInformeService.creaInformeExcel(finalLista, args[0]);
+						}
+						break;
+					default:
+						log.error("No se pudo generar informe ");
+						break;
+					}
+				}
 			}
-			
 		} else {
 			log.error("Error en los argumentos.");
 		}
